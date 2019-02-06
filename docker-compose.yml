@@ -1,0 +1,27 @@
+version: '3.1'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DB_HOST: "db"
+      DB_PORT: "3306"
+      DB_NAME: "product_db"
+      DB_USER: "dbuser"
+      DB_PASS: "y3T aN0tH3r 5tr0nG P4s5WoRd"
+    ports:
+      - "3000:3000"
+    volumes:
+      - "./logs:/var/log/"
+  db:
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "v3Ry 5tr0nG P4s5WoRd"
+      MYSQL_DATABASE: "product_db"
+      MYSQL_USER: "dbuser"
+      MYSQL_PASSWORD: "y3T aN0tH3r 5tr0nG P4s5WoRd"
+    ports:
+      - "3306:3306"
