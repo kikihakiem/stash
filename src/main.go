@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -10,6 +9,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 
 	"github.com/gorilla/mux"
+	"github.com/kikihakiem/stash/go/simple-crud/common"
 	"github.com/kikihakiem/stash/go/simple-crud/controller"
 )
 
@@ -34,13 +34,5 @@ func initDB() (*sql.DB, error) {
 	dbUser := os.Getenv("DB_USER")
 	dbPass := os.Getenv("DB_PASS")
 	dbName := os.Getenv("DB_NAME")
-	connStr := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", dbUser, dbPass, dbHost, dbPort, dbName)
-	fmt.Println(connStr)
-
-	db, err := sql.Open("mysql", connStr)
-	if err != nil {
-		return nil, err
-	}
-
-	return db, nil
+	return common.GetDB(dbHost, dbPort, dbUser, dbPass, dbName)
 }

@@ -34,14 +34,27 @@ func (c *ProductController) GetBySKU(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, `{"error": "bad request"}`, http.StatusBadRequest)
 		return
 	}
-	product := repository.GetProductBySKU(vars["sku"])
+
+	product, err := repository.GetProductBySKU(c.db, vars["sku"])
+	if err != nil {
+		c.logf("error getting product by SKU: %v", err)
+		http.Error(w, `{"error": "internal server error"}`, http.StatusInternalServerError)
+		return
+	}
+
 	json.NewEncoder(w).Encode(product)
 	w.WriteHeader(http.StatusOK)
 }
 
 func (c *ProductController) GetAll(w http.ResponseWriter, r *http.Request) {
-	products := repository.GetAll()
-	err := json.NewEncoder(w).Encode(products)
+	products, err := repository.GetAllProduct(c.db)
+	if err != nil {
+		c.logf("error getting all products: %v", err)
+		http.Error(w, `{"error": "internal server error"}`, http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(products)
 	if err != nil {
 		c.logf("error encoding response body: %v", err)
 		http.Error(w, `{"error": "internal server error"}`, http.StatusInternalServerError)
@@ -63,7 +76,13 @@ func (c *ProductController) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	product.ID = 3
+	product, err = repository.CreateProduct(c.db, product)
+	if err != nil {
+		c.logf("error creating product: %v", err)
+		http.Error(w, `{"error": "internal server error"}`, http.StatusInternalServerError)
+		return
+	}
+
 	json.NewEncoder(w).Encode(product)
 	w.WriteHeader(http.StatusOK)
 }
@@ -86,7 +105,13 @@ func (c *ProductController) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	product.Category = "Men - Casual - Pants"
+	product, err = repository.UpdateProduct(c.db, product)
+	if err != nil {
+		c.logf("error updating product: %v", err)
+		http.Error(w, `{"error": "internal server error"}`, http.StatusInternalServerError)
+		return
+	}
+
 	json.NewEncoder(w).Encode(product)
 	w.WriteHeader(http.StatusOK)
 }
@@ -95,6 +120,13 @@ func (c *ProductController) Delete(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	if vars["sku"] == "" {
 		http.Error(w, `{"error": "bad request"}`, http.StatusBadRequest)
+		return
+	}
+
+	err := repository.DeleteProduct(c.db, vars["sku"])
+	if err != nil {
+		c.logf("error deleting product: %v", err)
+		http.Error(w, `{"error": "internal server error"}`, http.StatusInternalServerError)
 		return
 	}
 	w.WriteHeader(204)
