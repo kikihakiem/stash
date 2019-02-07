@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"os"
 
+	_ "github.com/go-sql-driver/mysql"
+
 	"github.com/gorilla/mux"
 	"github.com/kikihakiem/stash/go/simple-crud/controller"
 )
@@ -15,7 +17,7 @@ func main() {
 
 	db, err := initDB()
 	if err != nil {
-		// log.Fatal("cannot initialize DB connection")
+		log.Fatalf("cannot initialize DB connection: %v", err)
 	}
 
 	r := mux.NewRouter()
@@ -33,6 +35,7 @@ func initDB() (*sql.DB, error) {
 	dbPass := os.Getenv("DB_PASS")
 	dbName := os.Getenv("DB_NAME")
 	connStr := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", dbUser, dbPass, dbHost, dbPort, dbName)
+	fmt.Println(connStr)
 
 	db, err := sql.Open("mysql", connStr)
 	if err != nil {

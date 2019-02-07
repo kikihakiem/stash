@@ -14,3 +14,18 @@ func GetProductBySKU(sku string) Product {
 		Category: "Men - Casual - Trousers",
 	}
 }
+
+func GetAll() []Product {
+	return []Product{
+		Product{
+			SKU:      "abc123",
+			Name:     "Cardinal Casual",
+			Category: "Men - Casual - Trousers",
+		},
+		Product{
+			SKU:      "abc124",
+			Name:     "Cardinal Formal",
+			Category: "Men - Casual - Trousers",
+		},
+	}
+}

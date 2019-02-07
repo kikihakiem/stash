@@ -1,0 +1,1 @@
+INSERT INTO products (sku, name, category) VALUES ("foobar", "Some cool product", "A popular category");
