@@ -28,6 +28,7 @@ func GetAllProduct(db *sql.DB) ([]Product, error) {
 		return products, err
 	}
 
+	defer result.Close()
 	for result.Next() {
 		var product Product
 		err := result.Scan(&product.ID, &product.SKU, &product.Name, &product.Category)
